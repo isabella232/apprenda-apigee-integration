@@ -5,10 +5,11 @@ Below you will find the steps and necessary code to set up an API Proxy in Apige
 The instructions are valid and tested with the version of Apigee as of March 2018.
 Let's get started...
 
+## Setup and Configuration
   * Create an API proxy in Apigee, link that proxy to an API product, a developer, and an app. Consult the Apigee documentation on the necessary steps
-  * Visit the Apps portion of your Apigee Dashboard and retrieve the client_id and client_secret corresponding to the App you created for this API proxy. Save them and you will use them later on
-  * Go to the Develop tab of your API proxy and start configuring the endpoints
-  * First, create the policies
+  * Visit the Apps portion of your Apigee Dashboard and retrieve the Consumer Key (mapped to client_id) and Consumer Secret (mapped to client_secret) corresponding to the App you created for this API proxy. Save them and you will use them later on
+  * Go to the Develop tab of your API proxy and start configuring the API Proxy
+  * First, create the Policies
   * The EchoMessage policy is used to add the apigee developer email address to the payload
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -128,7 +129,9 @@ Let's get started...
     <RouteRule name="NoRoute"/>
 </ProxyEndpoint>
 ```
-  * So far we defined the proxy endpoints. Go ahead and Publish your deployment to prod and test environments.
+  * So far we defined the proxy endpoints. Go ahead and Publish your deployment to prod and test environments for your latest revision.
+
+  ## Using the API Proxy
   * You can now use PowerShell or Curl or use any other HTTP API tool to invoke the APIs. I am using PowerShell.
   * Be aware that the base paths and other endpoint proxy paths in Apigee are `case sensitive`!
   * First, we make the request to get the bearer access token back. Substitute the client_id and client_secret with the ones you saved from earlier. Also change the initial part of the URI with the one defined for your Apigee Edge space. Notice i am using the `prod` deployment throughout the examples below.
@@ -145,4 +148,4 @@ $result = Invoke-WebRequest -Uri https://<Your-space-identifier>-prod.apigee.net
 $result.Content
 ```
 
-Good luck with creating your own API proxies in Apigee!
+Good luck with creating your own API proxies in Apigee! If you want to import the complete API proxy defined in this page, you can download it from  [ApigeeAuth_API_Proxy.zip](../attachments/ApigeeAuth_API_Proxy.zip)
