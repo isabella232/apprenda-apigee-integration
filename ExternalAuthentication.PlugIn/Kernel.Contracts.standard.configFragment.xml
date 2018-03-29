@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configurationFragment xmlns="urn:Apprenda.ConfigurationFragments-1.0">
+  <ifDoesNotExist path="/configuration/appSettings/add[@key='DefaultUiPort']">
+    <add parentPath="/configuration/appSettings">
+      <add key="DefaultUiPort" value="$SG$InternalUiPort$SG$" />
+    </add>
+  </ifDoesNotExist>
+  <ifDoesNotExist path="/configuration/system.serviceModel">
+    <add parentPath="/configuration">
+      <system.serviceModel>
+      </system.serviceModel>
+    </add>
+  </ifDoesNotExist>
+  <ifDoesNotExist path="/configuration/system.serviceModel/bindings">
+    <add parentPath="/configuration/system.serviceModel">
+      <bindings>
+      </bindings>
+    </add>
+  </ifDoesNotExist>
+  <ifDoesNotExist path="/configuration/system.serviceModel/bindings/netNamedPipeBinding">
+    <add parentPath="/configuration/system.serviceModel/bindings">
+      <netNamedPipeBinding>
+      </netNamedPipeBinding>
+    </add>
+  </ifDoesNotExist>
+  <ifDoesNotExist path="/configuration/system.serviceModel/bindings/netNamedPipeBinding/binding[@name='LocalNamedPipeBinding']">
+    <add parentPath="/configuration/system.serviceModel/bindings/netNamedPipeBinding">
+      <binding name="LocalNamedPipeBinding" sendTimeout="00:03:00" receiveTimeout="00:03:00">
+        <security mode="None" />
+      </binding>
+    </add>
+  </ifDoesNotExist>
+</configurationFragment>

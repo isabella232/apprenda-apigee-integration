@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configurationFragment xmlns="urn:Apprenda.ConfigurationFragments-1.0">
+  <!--
+  ####
+  ####    WCF BINDING DEFINITIONS
+  ####
+  -->
+  <!-- Add service container default net TCP binding -->
+  <ifDoesNotExist path="/configuration/system.serviceModel/bindings/netTcpBinding/binding[@name='NetTcpDefault']">
+    <add parentPath="/configuration/system.serviceModel/bindings/netTcpBinding">
+      <binding name="NetTcpDefault" maxReceivedMessageSize="16777216">
+        <security mode="None"/>
+        <readerQuotas maxStringContentLength="16777216" maxArrayLength="16777216"/>
+      </binding>
+    </add>
+  </ifDoesNotExist>
+
+  <ifDoesNotExist path="/configuration/system.serviceModel/bindings/netNamedPipeBinding/binding[@name='DefaultNetPipesBinding']">
+    <add parentPath="/configuration/system.serviceModel/bindings/netNamedPipeBinding">
+      <binding name="DefaultNetPipesBinding" maxReceivedMessageSize="16777216" maxConnections="65536">
+        <security mode="None" />
+        <readerQuotas maxArrayLength="16777216" maxStringContentLength="16777216" />
+      </binding>
+    </add>
+  </ifDoesNotExist>
+</configurationFragment>
