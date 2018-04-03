@@ -17,7 +17,7 @@ When your archive is uploaded, go to the Configure tab and click on "User Access
 When your user access model is set to "Anyone", as you might expect, anyone can make a request to your app. Below is a request made to our sample app with the access model set to "Anyone".
 
 
-![alt_text](images/tutorial_2.png )
+![](images/tutorial_2.PNG )
 
 
 As expected we get our desired values back from our API call. Now if we were to set up a proxy through Apigee pointing to this endpoint in Apprenda, it would successfully make any call. 
@@ -27,7 +27,7 @@ If you are not worried about securing access of your API to certain people then 
 However if you would like to secure your API access with OAuth continue reading.
 
 
-![alt_text](images/tutorial_3.png )
+![](images/tutorial_3.PNG )
 
 
 Go back to your Configure tab and change the User Access Model to "Authenticated". Note that if your app is already promoted you will need to demote it, change this setting, and promote again.
@@ -35,7 +35,7 @@ Go back to your Configure tab and change the User Access Model to "Authenticated
 Now if we make the same call as above to our API, we can't get through because we are not authorized. Authorization is handled by a plugin to Apprenda so if no plugin is configured or if your call doesn't meet the requirements expected by the plugin you have provided, you will not be able to get through to your API.
 
 
-![alt_text](images/tutorial_4.png )
+![](images/tutorial_4.PNG )
 
 
 ## Add Authentication Plugin
@@ -45,7 +45,7 @@ Now in order to get our desired authenticated calls from Apigee we will need to 
 To upload the plugin, go to the SOC and under the "Security" tab, select "Service Authentication". You should see a page similar to below:
 
 
-![alt_text](images/tutorial_5.png )
+![](images/tutorial_5.PNG )
 
 
 Click on "Enable External Authentication". A box will pop up for you to configure your plugin. First select the file provided in the repo for the external auth plugin, found [here](https://github.com/apprenda/apprenda-apigee-integration/blob/master/ExternalAuthentication.PlugIn/ExternalAuthPlugin.zip). Now in the HTTP-HEADERS text box you must enter a comma separated list of the headers which are expected by the plugin. In our case these are "Authorization" and "ApigeeHost" as these are the headers which your Apigee proxy you will configure next will supply when you make an API call through it. 
@@ -53,7 +53,7 @@ Click on "Enable External Authentication". A box will pop up for you to configur
 Click upload and wait for your plugin to successfully upload.
 
 
-![alt_text](images/tutorial_6.png )
+![](images/tutorial_6.PNG )
 
 
 Now that you have an external authentication plugin, you will need to configure a proxy on Apigee that supplies the information that your plugin is looking for.
@@ -66,13 +66,13 @@ First you will want to upload the provided "ApprendaProxy.zip" to Apigee. You ca
 In the proxy creation menu, select the last option, "Proxy bundle", and hit Next.
 
 
-![alt_text](images/tutorial_7.png )
+![](images/tutorial_7.PNG )
 
 
 On the next screen, select your proxy file and give the proxy any name you wish. Click next again.
 
 
-![alt_text](images/tutorial_8.png )
+![](images/tutorial_8.PNG )
 
 
 On the next screen simply click "Build" and once your proxy has finished building, follow the link to view your proxy in the proxy editor.
@@ -90,13 +90,13 @@ The second proxy endpoint, "VerifyEndpoint" has no target endpoint and will neve
 This proxy is configured to access a single API, if you would like to add additional apps please see the instructions [here](#adding-additional-apis).
 
 
-![alt_text](images/tutorial_9.png )
+![](images/tutorial_9.PNG )
 
 
 Now to configure your proxy, click on the "Develop" tab in the top right. You should see the screen below:
 
 
-![alt_text](images/tutorial_10.png )
+![](images/tutorial_10.PNG )
 
 
 If you would like to change the name or the base path for your app's endpoint you may do so here but it is not necessary for this tutorial.
@@ -105,7 +105,7 @@ Now click on "MyAppTarget" at the bottom of the navigator on the left. Here you 
 
 
 
-![alt_text](images/tutorial_11.png )
+![](images/tutorial_11.PNG )
 
 
 
@@ -114,14 +114,14 @@ Now click on "MyAppTarget" at the bottom of the navigator on the left. Here you 
 Once you have everything configured as you like you can deploy your proxy. In the top banner of your proxy's page click on the "Deployment" button and select an environment to deploy it to. For this tutorial we will be deploying to "test". If you deploy to "prod" instead all your steps will be the same you will just need to make sure to use the URL for the prod environment rather than test.
 
 
-![alt_text](images/tutorial_12.png )
+![](images/tutorial_12.PNG )
 
 
 After you deploy, when viewing the Overview tab you should be able to see a list of all URLs endpoints for your proxy. 
 
 
 
-![alt_text](images/tutorial_13.png )
+![](images/tutorial_13.PNG )
 
 
 Either URL for the "myapp" endpoint is the URL you will want to save to use for your API call later on. In this case our URL is "[https://jolinger-eval-test.apigee.net/myapp](https://jolinger-eval-test.apigee.net/myapp)". You will never directly call the "verify" endpoint, this is done by the plugin.
@@ -135,7 +135,7 @@ To create a developer, select "Publish" and then "Developers" from the left menu
 
 
 
-![alt_text](images/tutorial_14.png )
+![](images/tutorial_14.PNG )
 
 
 
@@ -146,7 +146,7 @@ The next step is to create a product and associate it with your API. Go to "Publ
 Give your product any name you wish, then select the environments you would like to use, or select both. Set the access level to public and key approval to automatic. Under resources select the proxy you created. Add resource paths for '/' and '/**'. See the screenshot below.
 
 
-![alt_text](images/tutorial_15.png )
+![](images/tutorial_15.PNG )
 
 
 Click save on the bottom right and your product is ready to use.
@@ -159,7 +159,7 @@ The final step on the Apigee side is to create an app. Go back to Publish and th
 Under credentials, you can set the expiration of the credentials. In this example the credentials never expire. Also under credentials, select the product you just created. You can see the settings I used in the screenshot below.
 
 
-![alt_text](images/tutorial_16.png )
+![](images/tutorial_16.PNG )
 
 
 Click save on the bottom right. You will be taken to the Apps page, click on the app you just created to get your credentials.
@@ -171,7 +171,7 @@ You can use an OAuth proxy in Apigee to validate your access token. This proxy i
 
 Upload the OAuth proxy (if you don't already have it). Your proxy should look like this: 
 
-![alt_text](images/tutorial_17.png )
+![](images/tutorial_17.PNG )
 
 
 Make sure you deploy this proxy to either prod or test if it is not deployed already.
@@ -181,7 +181,7 @@ You will use the path "/oauth/client_credential/accesstoken" to generate an acce
 If you would like to change the duration of your access token you can do so in the Develop tab, in the "GenerateAccessTokenClient" under Policies. The location is highlighted below. The expiration is in milliseconds.
 
 
-![alt_text](images/tutorial_18.png )
+![](images/tutorial_18.PNG )
 
 
 
@@ -190,7 +190,7 @@ If you would like to change the duration of your access token you can do so in t
 The Consumer Key and Consumer Secret are on the overview page for the app you created and are what you will need to generate your access token and start using your API. Click on the "Show" button next to each and save these somewhere.
 
 
-![alt_text](images/tutorial_19.png )
+![](images/tutorial_19.PNG )
 
 
 Now we are ready to generate the access token. Go to your console or whatever your preferred platform is for making your API calls.
@@ -202,7 +202,7 @@ We make the following call to generate our access token using the path for the O
 You should get a response that looks something like this:
 
 
-![alt_text](images/tutorial_20.png )
+![](images/tutorial_20.PNG )
 
 
 
@@ -214,12 +214,12 @@ For security reasons you will want to whitelist any URL that you are using to co
 
 Go back to the Apprenda SOC and then go to "Platform Registry" under "Configuration" and click the button to add a registry setting.
 
-![alt_text](images/tutorial_21.png )
+![](images/tutorial_21.PNG )
 
 
 The name of the setting needs to be Authentication.ExternalServicesWhitelist, and the value is a comma separated list of all URLs you want to allow. In this case we only have one which is the one we saved earlier.
 
-![alt_text](images/tutorial_22.png )
+![](images/tutorial_22.PNG )
 
 You should not include the path to your endpoint in this, just the base URL. As you add additional endpoints you do not need to change this setting. If you are going to switch to the prod environment you would need to add the URL for that (which in this example would be https://jolinger-eval-prod.apigee.net).
 
@@ -230,19 +230,19 @@ Now we are finally ready to make a call to your target API. Get the URL you save
 `curl https://jolinger-eval-test.apigee.net/myapp/api/values -H "Authorization: Bearer zS4lRlDNIkXBL9Aq9TxQK7ahBnmp"`
 
 
-![alt_text](images/tutorial_23.png )
+![](images/tutorial_23.PNG )
 
 
 And as you can see we get a result from our API, the same result we got in the beginning with no authorization enabled. Now if you attempt the same call and leave out the header or provide an invalid access token, you will not be able to get through. As shown here:
 
 
-![alt_text](images/tutorial_24.png )
+![](images/tutorial_24.PNG )
 
 
 And here:
 
 
-![alt_text](images/tutorial_25.png )
+![](images/tutorial_25.PNG )
 
 
 #### Congratulations, you have secured your Apprenda app with OAuth access through Apigee!
@@ -252,11 +252,11 @@ And here:
 
 If you have more than one web API contained in your Apprenda apps you would like to access through Apigee, you do not need to create additional proxies, simply add another target endpoint for each additional API.
 
-![alt_text](images/tutorial_26.png )
+![](images/tutorial_26.PNG )
 
 Now add another proxy endpoint, and copy and paste the contents of your existing endpoint ("myapp" in our example). Change the name of the endpoint, and give it your desired base path and then change the target endpoint to the name one you just created above. In the example our second target endpoint is named "MyAppTarget2", our second proxy endpoint is named "MyAppEndpoint2", and the base path is "myapp2".
 
-![alt_text](images/tutorial_27.png )
+![](images/tutorial_27.PNG )
 
 You may have to save as a new revision and deploy the proxy again. Now you can use this endpoint in the exact same way. You can add as many of these as you like just make sure you don't re-use names for the base path.
 
