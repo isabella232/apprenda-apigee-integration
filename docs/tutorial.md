@@ -12,8 +12,7 @@ Upload your archive for your app to Apprenda to get started. For instructions on
 When your archive is uploaded, go to the Configure tab and click on "User Access". You should see something similar to below:
 
 
-![alt_text](images/tutorial_1.png )
-
+![](images/tutorial_1.PNG)
 
 When your user access model is set to "Anyone", as you might expect, anyone can make a request to your app. Below is a request made to our sample app with the access model set to "Anyone".
 
