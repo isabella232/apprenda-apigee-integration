@@ -61,7 +61,7 @@ To upload the plugin, go to the SOC and under the "Security" tab, select "Servic
 
 Click on "Enable External Authentication". A box will pop up for you to configure your plugin. First select the file provided in the repo for the external auth plugin, found [here](https://github.com/apprenda/apprenda-apigee-integration/blob/master/ExternalAuthentication.PlugIn/ExternalAuthPlugin.zip). Now in the HTTP-HEADERS text box you must enter a comma separated list of the headers which are expected by the plugin. In our case these are "Authorization" and "ApigeeHost" as these are the headers which the Apigee proxy you will configure next will supply when you make an API call through it. 
 
-<img src="images/tutorial_6.PNG" align="center">
+![](images/tutorial_6.PNG )
 
 Click upload and wait for your plugin to successfully upload.
 
