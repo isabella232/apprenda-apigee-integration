@@ -41,9 +41,9 @@ However if you would like to secure your API access with OAuth continue reading.
 ![](images/tutorial_3.PNG )
 
 
-Go back to your Configure tab and change the User Access Model to "Authenticated". Note that if your app is already promoted you will need to demote it, change this setting, and promote again.
+Go back to your Configure tab and change the User Access Model to "Authenticated". Note that if your app is already promoted you will need to demote it, change this setting, and promote again. The User Access Model dictates who can have access to your application. By setting the access model to Authenticated or Authorized, Apprenda will ensure that the only end users that can access your application endpoints are authenticated and potentially authorized in Apprenda. You can read more about user access at http://docs.apprenda.com/9-0/app-level#useraccess. If you are going to use Apigee as the authentication/authorization front end for your APIs, you need to at least set this setting to Authenticated.
 
-Now if we make the same call as above to our API, we can't get through because we are not authorized. Authorization is handled by a plugin to Apprenda so if no plugin is configured or if your call doesn't meet the requirements expected by the plugin you have provided, you will not be able to get through to your API.
+Now if we make the same call as above to our API, we can't get through because we are not authenticated. APIs can be authenticated using Apprenda's authentication where you can establish a session using your credentials and get a token for API calls (More information on that method is available at http://docs.apprenda.com/restapi/accountmanagement/v1/authentication). For the purpose of this integration, we will not be using the standard Apprenda authentication that is available for APIs. Instead, we will let Apigee handle the Authentication and Authorization using its API management layer. In order for Apigee to do that, Apprenda requires an external authentication plugin to be configured. If your call doesn't meet the requirements expected by the plugin you have provided, you will not be able to get through to your API.
 
 
 ![](images/tutorial_4.PNG )
@@ -51,15 +51,15 @@ Now if we make the same call as above to our API, we can't get through because w
 
 ## Add Authentication Plugin
 
-Now in order to get our desired authenticated calls from Apigee we will need to upload the external authentication plugin. You can find both the [compiled archive](https://github.com/apprenda/apprenda-apigee-integration/blob/master/ExternalAuthentication.PlugIn/ExternalAuthPlugin.zip) and the source code for this plugin in the repo.
+Now in order to get our desired authenticated calls from Apigee we will need to upload the external authentication plugin. You can find both the [compiled archive (ExternalAuthPlugin.zip)](https://github.com/apprenda/apprenda-apigee-integration/releases) and the source code for this plugin in the repo.
 
-To upload the plugin, go to the SOC and under the "Security" tab, select "Service Authentication". You should see a page similar to below:
+To upload the plugin, go to the SOC and under the "Security" tab, select "Service Authentication". You should see a page similar to below (The instructions are for the 9.0 release of Apprenda. Some of the SOC portal options may be different for older versions of Apprenda):
 
 
 ![](images/tutorial_5.PNG )
 
 
-Click on "Enable External Authentication". A box will pop up for you to configure your plugin. First select the file provided in the repo for the external auth plugin, found [here](https://github.com/apprenda/apprenda-apigee-integration/blob/master/ExternalAuthentication.PlugIn/ExternalAuthPlugin.zip). Now in the HTTP-HEADERS text box you must enter a comma separated list of the headers which are expected by the plugin. In our case these are "Authorization" and "ApigeeHost" as these are the headers which the Apigee proxy you will configure next will supply when you make an API call through it. 
+Click on "Enable External Authentication". A box will pop up for you to configure your plugin. First select the file provided in the repo for the external auth plugin, found [here](https://github.com/apprenda/apprenda-apigee-integration/releases). Now in the HTTP-HEADERS text box you must enter a comma separated list of the headers which are expected by the plugin. In our case these are "Authorization" and "ApigeeHost" as these are the headers which the Apigee proxy you will configure next will supply when you make an API call through it. The headers offer a way for the API management tool, Apigee in this case, to provide metadata to the external authentication plugin. Apprenda will pass the data from the headers to the plugin on authentication calls.
 
 ![](images/tutorial_6.PNG )
 
@@ -67,13 +67,16 @@ Click upload and wait for your plugin to successfully upload.
 
 ### Explanation of Plugin
 
-The plugin will look for these specific headers when a request is received for any app with an access level set to Authorization. The plugin login takes the information in these two headers (the Authorization header contains the access key, and the ApigeeHost header contains the url of your Apigee environment) and use them to verify the validity of your request. The authorization header is supplied by you when you make a call through the Apigee proxy, the ApigeeHost header is added on automatically by your proxy.
+- Authorization HTTP Header: Contains the Bearer token that has authenticated a specific user to Apigee
+- ApigeeHost HTTP Header: contains the URL of the API proxy in Apigee. The plugin will validate this URL against approved Apigee endpoints and then use it to validate the Bearer token. Part of the token validation includes extracting the developer's email address. This is the developer that was authenticated in Apigee and we will use that email address to create a session for the developer in Apprenda. It is important that the email address of the user in Apprenda is the same as the email address of the developer in Apigee. The latter action is what allows the end to end process to work, by mapping a developer in Apigee to a developer in Apprenda and creating a link between the two sessions. Since the application's API is protected in Apprenda, it will only be accessible to users that have a valid Apprenda session.
 
-The first check it will make is to verify that the ApigeeHost provided exists in the registry setting whitelist for external authentication (this registry setting will be created later on in the tutorial). If that URL is in the whitelist, it will make a request to your proxy's verification endpoint and provide the access token it received. Your proxy will then validate the access token it receives from the plugin, and if the token is valid it will return the email address of the Apigee developer associated with that token. As long as this email address is the email of an Apprenda tenant who has access to the app you are requesting, your request will be completed and Apprenda will execute your desired API call. Otherwise, the request is denied and you will not get through to your API.
+The plugin will look for these specific headers when a request is received for any app with an access level set to Authentication or higher. The plugin login takes the information in these two headers and use them to verify the validity of your request. The authorization header is supplied by you when you make a call through the Apigee proxy, the ApigeeHost header is added on automatically by your proxy.
 
-![diagram](images/ApigeeIntegration.PNG)
+The first check it will make is to verify that the ApigeeHost provided exists in the registry setting whitelist for external authentication (this registry setting will be created later on in the tutorial). If that URL is in the whitelist, it will make a request to your proxy's verification endpoint and provide the access token it received. Your proxy will then validate the access token it receives from the plugin, and if the token is valid it will return the email address of the Apigee developer associated with that token. As long as this email address is the email of an Apprenda tenant who has access to the app you are requesting, your request will be completed and Apprenda will execute your desired API call. Otherwise, the request is denied and you will not get through to your API. If you are app is set to Authenticated, any valid tenant in Apprenda will work. If your app is set to Authorized, the email address has to correspond to a valid tenant in Apprenda that also has been granted access to this application.
 
-The above diagram shows the interaction between the user, Apigee, the plugin, and your Apprenda app.
+![diagram](images/ApigeeIntegration.png)
+
+The above diagram shows the interaction between the user, Apigee, the plugin, and your Apprenda application.
 
 Now that you have an external authentication plugin, you will need to configure a proxy on Apigee that supplies the information that your plugin is looking for.
 
