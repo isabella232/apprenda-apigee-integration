@@ -12,7 +12,7 @@ Integrating the Apprenda Cloud Platform with the Apigee API management product t
 
 ## Step-by-Step Installation and Setup
 
-Apigee is an API management platform and the purpose of this integration is to access your web APIs hosted on Apprenda through Apigee securely with OAuth authorization. The steps below will explain what to do on both the Apprenda and Apigee end to get this integration working and what the end result will look like. There is also a [video walkthrough](linktovideo) of this process.
+Apigee is an API management platform and the purpose of this integration is to access your web APIs hosted on Apprenda through Apigee securely with OAuth authorization. The steps below will explain what to do on both the Apprenda and Apigee end to get this integration working and what the end result will look like. There is also a [video walkthrough](https://www.youtube.com/watch?v=TuFLrVqy6m0) of this process.
 
 
 ## Configure Your Apprenda App
