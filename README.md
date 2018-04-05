@@ -76,14 +76,14 @@ The first check it will make is to verify that the ApigeeHost provided exists in
 
 ![diagram](images/ApigeeIntegration.png)
 
-The above diagram shows the interaction between the user, Apigee, the plugin, and your Apprenda application.
+The above diagram shows the step-by-step interaction between the end user, Apigee, the plugin, and your Apprenda application.
 
 Now that you have an external authentication plugin, you will need to configure a proxy on Apigee that supplies the information that your plugin is looking for.
 
 
 ## Setup on Apigee
 
-First you will want to upload the provided "ApprendaProxy.zip" to Apigee. You can find this in the repo in the "Apigee Proxies" folder, or directly [here](https://github.com/apprenda/apprenda-apigee-integration/blob/master/Apigee%20Proxies/ApprendaProxy.zip). From your Apigee dashboard, go to "API Proxies" and in the top right click on the "+ Proxy" button.
+First you will want to upload the provided "ApprendaProxy.zip" to Apigee. You can find this in the repo under [releases](https://github.com/apprenda/apprenda-apigee-integration/releases). From your Apigee dashboard, go to "API Proxies" and in the top right click on the "+ Proxy" button.
 
 In the proxy creation menu, select the last option, "Proxy bundle", and hit Next.
 
@@ -150,7 +150,7 @@ Either URL for the "myapp" endpoint is the URL you will want to save to use for 
 
 ### Developers
 
-The next thing you will need to do is create a developer in Apigee. The developer you make must have the same email address as a tenant in Apprenda which is authorized to use your app.
+The next thing you will need to do is create a developer in Apigee. The developer you make must have the same email address as a tenant in Apprenda which is authorized to use your app. This is how the authentication plugin will match the accounts between Apigee and Apprenda.
 
 To create a developer, select "Publish" and then "Developers" from the left menu and then click on the "+ Developer" button in the top right. Select a First Name, Last Name, Username and Email for your developer. Only the email needs to match your Apprenda tenant account.
 
@@ -188,7 +188,7 @@ Click save on the bottom right. You will be taken to the Apps page, click on the
 
 ### Create OAuth Proxy
 
-You can use an OAuth proxy in Apigee to validate your access token. This proxy is provided by Apigee and so it may already be on your account, called "oauth". If not, it is provided in the Apprenda repo in the "Apigee Proxies" folder, or directly [here](https://github.com/apprenda/apprenda-apigee-integration/blob/master/Apigee%20Proxies/oauth.zip). This proxy does not have any target endpoints and is not attached to any app or product, all it does is generate an access token from your client credentials.
+You can use an OAuth proxy in Apigee to validate your access token. This proxy is provided by Apigee and so it may already be on your account, called "oauth". If not, OAuthProxy.zip is provided in the releases folder [here](https://github.com/apprenda/apprenda-apigee-integration/releases). This proxy does not have any target endpoints and is not attached to any app or product. This proxy is used to generate an access token from your client credentials.
 
 Upload the OAuth proxy (if you don't already have it). Your proxy should look like this: 
 
@@ -197,9 +197,9 @@ Upload the OAuth proxy (if you don't already have it). Your proxy should look li
 
 Make sure you deploy this proxy to either prod or test if it is not deployed already.
 
-You will use the path "/oauth/client_credential/accesstoken" to generate an access token, providing your Consumer Key and Consumer Secret, which you will do below. If you would like to refresh the access token after creation there is also the "/refresh_accesstoken" path.
+You will use the path "/oauth/client_credential/accesstoken" to generate an access token, providing your Consumer Key and Consumer Secret, as you can see below. If you would like to refresh the access token after creation there is also the "/refresh_accesstoken" path.
 
-If you would like to change the duration of your access token you can do so in the Develop tab, in the "GenerateAccessTokenClient" under Policies. The location is highlighted below. The expiration is in milliseconds.
+If you would like to change the duration of the validity (TTL) of your access token you can do so in the Develop tab, in the "GenerateAccessTokenClient" under Policies. The location is highlighted below. The expiration is in milliseconds.
 
 
 ![](images/tutorial_18.PNG )
@@ -216,11 +216,11 @@ The Consumer Key and Consumer Secret are on the overview page for the app you cr
 
 Now we are ready to generate the access token. Go to your console or whatever your preferred platform is for making your API calls.
 
-We make the following call to generate our access token using the path for the OAuth proxy explained above. If you have changed the base path for this proxy, or you are using the prod environment rather than test, then adjust your call accordingly:
+We make the following call to generate our access token using the path for the OAuth proxy explained above. If you have changed the base path for this proxy, or you are using the prod environment rather than test, then adjust your call accordingly. Make sure to substitute KEY and SECRET in the API call below with the real values you retrieved from Apigee earlier.
 
 `curl -X POST -H "Content-Type: application/x-www-form-urlencoded" https://jolinger-eval-test.apigee.net/oauth/client_credential/accesstoken?grant_type=client_credentials -d 'client_id=KEY&client_secret=SECRET`
 
-You should get a response that looks something like this:
+You should get a response that looks something like this. The most important information is the developer.email and the access_token. we will use the access_token later on.
 
 
 ![](images/tutorial_20.PNG )
@@ -231,9 +231,11 @@ You should get a response that looks something like this:
 
 Now before you can make a call to your API there is actually one last step in Apprenda.
 
-For security reasons you will want to whitelist any URL that you are using to connect to this app, the plugin will check the whitelist when it receives a request to verify that the source is legitimate, before it verifies the access token provided. 
+For security reasons you will want to whitelist any URL that you are using to connect to this app. This will prevent a bad actor from providing you an invalid token and a URL to their malicious API server that will always authenticate the bad token. Such a schenario would allow them to hijack an Apprenda session.
 
-Go back to the Apprenda SOC and then go to "Platform Registry" under "Configuration" and click the button to add a registry setting.
+The plugin will check the whitelist when it receives a request to verify that the source is legitimate, before it verifies the access token provided. Apprenda will use the endpoint from the request to validate the access token, so it is important that you only whitelist API proxies that are allowed to use the external authentication method for Apprenda.
+
+Go back to the Apprenda Operator Portal (SOC) and then go to "Platform Registry" under "Configuration" and click the button to add a registry setting.
 
 ![](images/tutorial_21.PNG )
 
